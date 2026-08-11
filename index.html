@@ -3,115 +3,158 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>情侶雙機大富翁 🔥</title>
+  <title>🔥 情侶親密 30 格大富翁 🔥</title>
   
-  <!-- 免費免帳號 P2P 連線庫 -->
+  <!-- P2P 連線庫 -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background: linear-gradient(135deg, #2b1055, #7597de, #b83b5e); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; color: #fff; }
+    body { background: linear-gradient(135deg, #1f0836, #431f6e, #881e4a); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; color: #fff; }
     
-    .container { width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; }
-    h1 { font-size: 1.4rem; text-shadow: 0 2px 10px rgba(0,0,0,0.3); margin-bottom: 8px; font-weight: 800; text-align: center; }
+    .container { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; }
+    h1 { font-size: 1.3rem; text-shadow: 0 2px 10px rgba(0,0,0,0.4); margin-bottom: 6px; font-weight: 800; text-align: center; }
     
-    /* 房間大廳設定區 */
+    /* 房間連線區 */
     .lobby-box {
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(10px);
-      padding: 12px 16px; border-radius: 16px; width: 100%;
-      margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; align-items: center;
+      padding: 8px 12px; border-radius: 12px; width: 100%;
+      margin-bottom: 8px; display: flex; flex-direction: column; gap: 4px; align-items: center;
       box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     }
     .room-inputs { display: flex; gap: 8px; width: 100%; justify-content: center; }
-    .room-inputs input { width: 120px; padding: 6px 12px; border-radius: 12px; border: none; text-align: center; font-weight: bold; font-size: 0.9rem; outline: none; }
-    .btn-connect { background: #ff007f; color: #fff; border: none; padding: 6px 14px; border-radius: 12px; font-weight: bold; cursor: pointer; }
-    .status-text { font-size: 0.8rem; opacity: 0.9; }
+    .room-inputs input { width: 110px; padding: 4px 8px; border-radius: 8px; border: none; text-align: center; font-weight: bold; font-size: 0.85rem; outline: none; }
+    .btn-connect { background: #ff007f; color: #fff; border: none; padding: 4px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.85rem; }
+    .status-text { font-size: 0.75rem; opacity: 0.9; }
 
-    /* 遊戲地圖 (4x4 環狀) */
+    /* 30 格環狀地圖 (9x8 環狀) */
     .board {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: repeat(4, 1fr);
-      gap: 6px; width: 100%; aspect-ratio: 1 / 1;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      padding: 8px; border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      grid-template-columns: repeat(9, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      gap: 3px; width: 100%; aspect-ratio: 9 / 8;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      padding: 6px; border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
       position: relative;
     }
     
     .cell {
-      background: rgba(255, 255, 255, 0.85); border-radius: 12px;
+      background: rgba(255, 255, 255, 0.9); border-radius: 6px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      font-size: 0.72rem; font-weight: 700; color: #4a154b; text-align: center; padding: 2px; position: relative;
+      font-size: 0.55rem; font-weight: 700; color: #3b0944; text-align: center; padding: 1px; position: relative;
+      line-height: 1.1; overflow: hidden;
     }
-    .cell .icon { font-size: 1rem; }
+    .cell .icon { font-size: 0.75rem; margin-bottom: 1px; }
     
     /* 中央控制區 */
     .center-area {
-      grid-column: 2 / 4; grid-row: 2 / 4;
-      background: rgba(255, 255, 255, 0.95); border-radius: 16px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px;
+      grid-column: 2 / 9; grid-row: 2 / 8;
+      background: rgba(255, 255, 255, 0.95); border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
     }
-    .turn-info { font-size: 0.85rem; font-weight: 800; margin-bottom: 8px; color: #880e4f; text-align: center; }
+    .turn-info { font-size: 0.85rem; font-weight: 800; margin-bottom: 6px; color: #880e4f; text-align: center; }
     
+    /* 3D 骰子容器 */
+    .dice-container {
+      perspective: 600px;
+      margin: 4px 0 10px 0;
+      width: 48px; height: 48px;
+    }
+    .cube {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 1s cubic-bezier(0.2, 0.8, 0.3, 1.1);
+    }
+    .cube-face {
+      position: absolute; width: 48px; height: 48px;
+      background: linear-gradient(145deg, #ffffff, #e6e6e6);
+      border: 2px solid #ff007f; border-radius: 10px;
+      font-size: 1.4rem; font-weight: bold; color: #ff007f;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    }
+    .face-1 { transform: rotateY(0deg) translateZ(24px); }
+    .face-2 { transform: rotateY(90deg) translateZ(24px); }
+    .face-3 { transform: rotateY(180deg) translateZ(24px); }
+    .face-4 { transform: rotateY(-90deg) translateZ(24px); }
+    .face-5 { transform: rotateX(90deg) translateZ(24px); }
+    .face-6 { transform: rotateX(-90deg) translateZ(24px); }
+
     .dice-btn {
       background: linear-gradient(135deg, #ff007f, #7928ca);
-      color: white; border: none; padding: 10px 16px;
-      border-radius: 25px; font-size: 0.9rem; font-weight: bold;
-      cursor: pointer; outline: none;
+      color: white; border: none; padding: 8px 16px;
+      border-radius: 20px; font-size: 0.85rem; font-weight: bold;
+      cursor: pointer; outline: none; box-shadow: 0 4px 10px rgba(255,0,127,0.3);
     }
-    .dice-btn:disabled { background: #ccc; cursor: not-allowed; opacity: 0.6; }
+    .dice-btn:disabled { background: #ccc; cursor: not-allowed; opacity: 0.6; box-shadow: none; }
     
     /* 棋子標記 */
     .player-icon {
-      width: 14px; height: 14px; border-radius: 50%;
-      position: absolute; bottom: 4px; border: 2px solid white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      width: 11px; height: 11px; border-radius: 50%;
+      position: absolute; bottom: 2px; border: 1.5px solid white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4);
       transition: all 0.3s ease;
     }
-    .p1-icon { background: #00f2fe; left: 4px; }
-    .p2-icon { background: #ff0844; right: 4px; }
+    .p1-icon { background: #00f2fe; left: 2px; }
+    .p2-icon { background: #ff0844; right: 2px; }
 
     /* 任務彈窗 */
     .modal {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.65); backdrop-filter: blur(5px);
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(5px);
       justify-content: center; align-items: center; padding: 20px; z-index: 99;
     }
     .modal-content {
-      background: #ffffff; border-radius: 24px; padding: 20px; text-align: center;
-      max-width: 300px; width: 100%; color: #333;
+      background: #ffffff; border-radius: 20px; padding: 18px; text-align: center;
+      max-width: 300px; width: 100%; color: #333; animation: popIn 0.3s ease-out;
     }
-    .modal-tag { display: inline-block; background: #ffe4e6; color: #e11d48; font-size: 0.75rem; font-weight: bold; padding: 4px 10px; border-radius: 12px; margin-bottom: 6px; }
-    .modal-title { font-size: 1.1rem; color: #880e4f; font-weight: 800; margin-bottom: 8px; }
-    .modal-text { font-size: 0.95rem; color: #475569; margin-bottom: 16px; line-height: 1.4; }
+    @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-tag { display: inline-block; background: #ffe4e6; color: #e11d48; font-size: 0.7rem; font-weight: bold; padding: 3px 8px; border-radius: 10px; margin-bottom: 6px; }
+    .modal-title { font-size: 1rem; color: #880e4f; font-weight: 800; margin-bottom: 8px; }
+    .modal-text { font-size: 0.9rem; color: #475569; margin-bottom: 14px; line-height: 1.4; }
     .modal-btn {
       background: linear-gradient(135deg, #ff007f, #7928ca);
-      color: white; border: none; padding: 10px 24px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; cursor: pointer;
+      color: white; border: none; padding: 8px 20px; border-radius: 18px; font-size: 0.85rem; font-weight: bold; cursor: pointer;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>🔥 情侶雙機大富翁 🔥</h1>
+    <h1>🔥 情侶親密 30 格大富翁 🔥</h1>
     
-    <!-- 大廳連線區 -->
+    <!-- 房間連線區 -->
     <div class="lobby-box">
       <div class="room-inputs">
-        <input type="text" id="roomIdInput" placeholder="輸入自訂房號" value="520">
+        <input type="text" id="roomIdInput" placeholder="自訂房號" value="520">
         <button class="btn-connect" onclick="joinRoom()">進入房間</button>
       </div>
-      <div class="status-text" id="statusText">請輸入相同房號並點擊「進入房間」</div>
+      <div class="status-text" id="statusText">輸入相同房號點擊「進入房間」連線</div>
     </div>
 
-    <!-- 地圖 -->
+    <!-- 30格地圖 -->
     <div class="board" id="board">
       <div class="center-area">
         <div class="turn-info" id="turnText">請先連線</div>
-        <button class="dice-btn" id="diceBtn" onclick="handleRollDice()" disabled>🎲 擲骰子</button>
+        
+        <!-- 3D 骰子動畫區 -->
+        <div class="dice-container">
+          <div class="cube" id="cube">
+            <div class="cube-face face-1">1</div>
+            <div class="cube-face face-2">2</div>
+            <div class="cube-face face-3">3</div>
+            <div class="cube-face face-4">4</div>
+            <div class="cube-face face-5">5</div>
+            <div class="cube-face face-6">6</div>
+          </div>
+        </div>
+
+        <button class="dice-btn" id="diceBtn" onclick="startRollDice()" disabled>🎲 擲骰子</button>
       </div>
     </div>
   </div>
@@ -127,39 +170,60 @@
   </div>
 
   <script>
-    // 12 格親密任務
+    // 30 格豐富互動任務清單
     const tiles = [
-      { name: "起點 🚩", icon: "🚩", tag: "微甜任務", task: "領取一個深情的熱吻（至少 5 秒）！" },
-      { name: "性感按摩 💆‍♂️", icon: "💆‍♂️", tag: "身體接觸", task: "挑選對方敏感部位輕柔按摩 30 秒。" },
-      { name: "耳朵吹氣 🌬️", icon: "🌬️", tag: "調情懲罰", task: "靠在對方耳邊輕吹氣並說句悄悄話。" },
-      { name: "真心話 💬", icon: "💬", tag: "告白時刻", task: "坦白說出對方最讓你覺得性感的特質。" },
-      { name: "鎖骨親吻 💋", icon: "💋", tag: "親密互動", task: "在對方的鎖骨或脖子上連續親吻 3 下。" },
-      { name: "解扣脫衣 👔", icon: "👔", tag: "刺激懲罰", task: "脫掉自己一件衣服或由對方解開鈕扣。" },
-      { name: "禁言凝視 👁️", icon: "👁️", tag: "眼神交流", task: "對視 15 秒不許講話，先笑場的被親一下。" },
-      { name: "神秘觸摸 🙈", icon: "🙈", tag: "感官體驗", task: "閉眼 10 秒，猜猜對方用身體哪裡碰你。" },
-      { name: "大膽告白 🔞", icon: "🔞", tag: "心跳加速", task: "分享一個對對方產生過的親密幻想。" },
-      { name: "盲盒福利 🎁", icon: "🎁", tag: "許願卡", task: "獲得『無條件指定對方做一個要求』特權卡！" },
+      { name: "起點 🚩", icon: "🚩", tag: "微甜獎勵", task: "領取一個深情的熱吻（至少 5 秒）作為起跑獎勵！" },
+      { name: "性感按摩 💆", icon: "💆", tag: "身體接觸", task: "輕柔按摩對方脖子或大腿內側 30 秒。" },
+      { name: "耳朵吹氣 🌬️", icon: "🌬️", tag: "調情懲罰", task: "靠在對方耳邊輕輕吹氣，並說句極致撩人的耳語。" },
+      { name: "真心話 💬", icon: "💬", tag: "告白時刻", task: "坦白說出對方身上最讓你著迷的部位或魅力點。" },
+      { name: "鎖骨親吻 💋", icon: "💋", tag: "親密互動", task: "在對方的鎖骨上連續親吻 3 下。" },
+      { name: "解扣脫衣 👔", icon: "👔", tag: "刺激懲罰", task: "脫掉自己的一件衣服或飾品（或由對方幫忙脫）。" },
+      { name: "禁言凝視 👁️", icon: "👁️", tag: "眼神交流", task: "雙眼緊盯對方 15 秒，先眨眼或笑場的人要被親一下。" },
+      { name: "神秘觸摸 🙈", icon: "🙈", tag: "感官體驗", task: "閉眼 10 秒，讓對方拿手或嘴唇碰你，你要猜出是用什麼觸摸。" },
+      { name: "大膽告白 🔞", icon: "🔞", tag: "心跳加速", task: "分享一個你對對方產生過的親密幻想。" },
+      { name: "盲盒福利 🎁", icon: "🎁", tag: "許願卡", task: "獲得一張『今晚無條件指定對方執行一個要求』特權卡！" },
       { name: "咬耳朵 👄", icon: "👄", tag: "微刺激", task: "輕咬對方耳垂或下巴並發出溫柔聲音。" },
-      { name: "主動獻吻 💋", icon: "💋", tag: "甜蜜獎勵", task: "深情親吻對方嘴唇 10 秒鐘。" }
+      { name: "主動獻吻 💋", icon: "💋", tag: "甜蜜獎勵", task: "深情親吻對方嘴唇 10 秒鐘，不可分開。" },
+      { name: "腰際擁抱 🫂", icon: "🫂", tag: "溫柔抱抱", task: "從背後緊緊抱住對方 20 秒，感受彼此體溫。" },
+      { name: "甜蜜餵食 🍓", icon: "🍓", tag: "情趣互動", task: "用嘴巴餵對方吃一口食物或喝一口飲料。" },
+      { name: "唇印留痕 💋", icon: "💋", tag: "專屬印記", task: "在對方臉頰或脖子上留下一個明顯的唇印。" },
+      { name: "掌心傳情 ✋", icon: "✋", tag: "浪漫觸碰", task: "十指緊扣 30 秒，期間用大拇指撫摸對方手背。" },
+      { name: "微醺耳語 🍷", icon: "🍷", tag: "土味情話", task: "用最性感的聲音對對方說出一句超撩人的土味情話。" },
+      { name: "腹肌/小腹 🖐️", icon: "🖐️", tag: "親密觸摸", task: "伸進對方衣服裡抚摸腹部 15 秒。" },
+      { name: "額頭親吻 💖", icon: "💖", tag: "寵溺時刻", task: "溫柔地親吻對方的額頭，並說一句『我愛你』。" },
+      { name: "性感坐姿 🧘", icon: "🧘", tag: "心跳飆升", task: "坐到對方的腿上維持 20 秒。" },
+      { name: "真心告白 💌", icon: "💌", tag: "深情告白", task: "說出對方最讓你感到安心或感動的一件事。" },
+      { name: "挑逗撫摸 💫", icon: "💫", tag: "極限調情", task: "用手指輕輕劃過對方的嘴唇和脖子。" },
+      { name: "角色扮演 🎭", icon: "🎭", tag: "情趣懲罰", task: "用『主人/女僕』或『霸道總裁』語氣對對方下達一個指令。" },
+      { name: "深情對視 🥺", icon: "🥺", tag: "靈魂交流", task: "摸著對方的臉，深情對視說出對方的三個優點。" },
+      { name: "輕咬手指 ☝️", icon: "☝️", tag: "微酸微甜", task: "將對方的一根手指放進嘴裡輕輕咬一下。" },
+      { name: "大腿蹭蹭 腿", icon: "🦵", tag: "肢體調情", task: "用你的腿輕輕蹭對方的腿 15 秒。" },
+      { name: "專屬按摩 💆‍♀️", icon: "💆‍♀️", tag: "舒緩體驗", task: "為對方按壓肩膀與手臂 30 秒。" },
+      { name: "溫柔吹氣 🌬️", icon: "🌬️", tag: "感官挑戰", task: "朝對方的眼睛或後頸輕輕吹氣。" },
+      { name: "激情擁吻 💋", icon: "💋", tag: "高潮獎勵", task: "進行一次帶有舌頭的法式熱吻 15 秒！" },
+      { name: "國王命令 👑", icon: "👑", tag: "終極特權", task: "化身國王，命令對方立刻為你做一件事！" }
     ];
 
+    // 30 格環狀邊緣座標 (9x8 Grid)
     const gridPositions = [
-      {r:1, c:1}, {r:1, c:2}, {r:1, c:3}, {r:1, c:4},
-      {r:2, c:4}, {r:3, c:4}, {r:4, c:4}, {r:4, c:3},
-      {r:4, c:2}, {r:4, c:1}, {r:3, c:1}, {r:2, c:1}
+      {r:1, c:1}, {r:1, c:2}, {r:1, c:3}, {r:1, c:4}, {r:1, c:5}, {r:1, c:6}, {r:1, c:7}, {r:1, c:8}, {r:1, c:9},
+      {r:2, c:9}, {r:3, c:9}, {r:4, c:9}, {r:5, c:9}, {r:6, c:9}, {r:7, c:9}, {r:8, c:9},
+      {r:8, c:8}, {r:8, c:7}, {r:8, c:6}, {r:8, c:5}, {r:8, c:4}, {r:8, c:3}, {r:8, c:2}, {r:8, c:1},
+      {r:7, c:1}, {r:6, c:1}, {r:5, c:1}, {r:4, c:1}, {r:3, c:1}, {r:2, c:1}
     ];
 
-    // 遊戲狀態
     let gameState = {
       p1Pos: 0,
       p2Pos: 0,
-      currentPlayer: 0, // 0: 寶貝 A, 1: 寶貝 B
+      currentPlayer: 0,
+      diceVal: 1,
       modal: { open: false, tileIndex: 0, playerIndex: 0 }
     };
 
     let peer = null;
     let conn = null;
-    let myRole = -1; // 0 代表房主 (寶貝 A)，1 代表加入者 (寶貝 B)
+    let myRole = -1;
+    let isRolling = false;
 
     function initBoard() {
       const board = document.getElementById("board");
@@ -176,7 +240,6 @@
       updateUI();
     }
 
-    // 建立/加入房間連線
     function joinRoom() {
       const roomId = document.getElementById("roomIdInput").value.trim();
       if (!roomId) return alert("請輸入房號！");
@@ -184,23 +247,21 @@
       const statusText = document.getElementById("statusText");
       statusText.innerText = "連線中...";
 
-      const hostPeerId = "couples-monopoly-room-" + roomId;
+      const hostPeerId = "couples-monopoly-30rooms-" + roomId;
 
-      // 嘗試建立房主 (寶貝 A)
       peer = new Peer(hostPeerId);
 
-      peer.on('open', (id) => {
-        myRole = 0; // 我是寶貝 A
-        statusText.innerText = `你是【寶貝 A 💙】(房間 ${roomId})，等待寶貝 B 加入...`;
+      peer.on('open', () => {
+        myRole = 0;
+        statusText.innerText = `你是【寶貝 A 💙】(房號 ${roomId})，等待寶貝 B...`;
         updateUI();
       });
 
-      // 如果房主 ID 已被佔用，代表自己是加入者 (寶貝 B)
       peer.on('error', (err) => {
         if (err.type === 'unavailable-id') {
-          peer = new Peer(); // 隨機生成自己的 ID
+          peer = new Peer();
           peer.on('open', () => {
-            myRole = 1; // 我是寶貝 B
+            myRole = 1;
             conn = peer.connect(hostPeerId);
             setupConnection();
           });
@@ -209,11 +270,9 @@
         }
       });
 
-      // 房主接收連線要求
       peer.on('connection', (c) => {
         conn = c;
         setupConnection();
-        // 房主主動發送當前遊戲狀態給寶貝 B
         sendState();
       });
     }
@@ -223,12 +282,21 @@
       statusText.innerText = myRole === 0 ? "寶貝 B 已成功連線！💖" : "成功連線至寶貝 A！💙";
 
       conn.on('data', (data) => {
-        gameState = data;
-        updateUI();
+        // 如果收到動畫觸發指令
+        if (data.action === "rollAnimation") {
+          animateDice(data.targetVal, () => {
+            gameState = data.newState;
+            updateUI();
+          });
+        } else {
+          gameState = data;
+          setCubeRotation(gameState.diceVal || 1);
+          updateUI();
+        }
       });
 
       conn.on('close', () => {
-        statusText.innerText = "連線已中斷，請重新進入房間。";
+        statusText.innerText = "連線已中斷，請重新連線。";
       });
 
       updateUI();
@@ -257,6 +325,46 @@
       });
     }
 
+    // 3D 骰子旋轉角度對照
+    function setCubeRotation(val) {
+      const cube = document.getElementById("cube");
+      const rotations = {
+        1: "rotateY(0deg) rotateX(0deg)",
+        2: "rotateY(-90deg) rotateX(0deg)",
+        3: "rotateY(-180deg) rotateX(0deg)",
+        4: "rotateY(90deg) rotateX(0deg)",
+        5: "rotateX(-90deg) rotateY(0deg)",
+        6: "rotateX(90deg) rotateY(0deg)"
+      };
+      cube.style.transform = rotations[val] || rotations[1];
+    }
+
+    // 擲骰子滾動動畫
+    function animateDice(targetVal, callback) {
+      const cube = document.getElementById("cube");
+      isRolling = true;
+      
+      // 隨機翻滾 3~4 圈
+      const randX = (Math.floor(Math.random() * 4) + 3) * 360;
+      const randY = (Math.floor(Math.random() * 4) + 3) * 360;
+
+      const finalRotations = {
+        1: `rotateX(${randX}deg) rotateY(${randY}deg)`,
+        2: `rotateX(${randX}deg) rotateY(${randY - 90}deg)`,
+        3: `rotateX(${randX}deg) rotateY(${randY - 180}deg)`,
+        4: `rotateX(${randX}deg) rotateY(${randY + 90}deg)`,
+        5: `rotateX(${randX - 90}deg) rotateY(${randY}deg)`,
+        6: `rotateX(${randX + 90}deg) rotateY(${randY}deg)`
+      };
+
+      cube.style.transform = finalRotations[targetVal];
+
+      setTimeout(() => {
+        isRolling = false;
+        if (callback) callback();
+      }, 1000);
+    }
+
     function updateUI() {
       updatePlayerPositions();
 
@@ -269,11 +377,10 @@
         diceBtn.disabled = true;
       } else {
         turnText.innerText = `輪到：${names[gameState.currentPlayer]}`;
-        // 只有輪到自己且沒有開啟彈窗時才能擲骰子
-        diceBtn.disabled = (gameState.currentPlayer !== myRole) || gameState.modal.open;
+        diceBtn.disabled = (gameState.currentPlayer !== myRole) || gameState.modal.open || isRolling;
       }
 
-      // 控制彈窗
+      // 彈窗狀態
       const modal = document.getElementById("modal");
       if (gameState.modal.open) {
         const currentTile = tiles[gameState.modal.tileIndex];
@@ -286,20 +393,43 @@
       }
     }
 
-    function handleRollDice() {
-      if (gameState.currentPlayer !== myRole) return;
+    function startRollDice() {
+      if (gameState.currentPlayer !== myRole || isRolling) return;
 
-      const step = Math.floor(Math.random() * 3) + 1;
+      const step = Math.floor(Math.random() * 6) + 1; // 1~6 點數
       
+      let nextPos = 0;
       if (myRole === 0) {
-        gameState.p1Pos = (gameState.p1Pos + step) % tiles.length;
-        gameState.modal = { open: true, tileIndex: gameState.p1Pos, playerIndex: 0 };
+        nextPos = (gameState.p1Pos + step) % tiles.length;
       } else {
-        gameState.p2Pos = (gameState.p2Pos + step) % tiles.length;
-        gameState.modal = { open: true, tileIndex: gameState.p2Pos, playerIndex: 1 };
+        nextPos = (gameState.p2Pos + step) % tiles.length;
       }
 
-      sendState();
+      // 本地先跑骰子動畫
+      animateDice(step, () => {
+        if (myRole === 0) gameState.p1Pos = nextPos;
+        else gameState.p2Pos = nextPos;
+
+        gameState.diceVal = step;
+        gameState.modal = { open: true, tileIndex: nextPos, playerIndex: myRole };
+
+        sendState();
+      });
+
+      // 同步發送動畫效果給對方
+      if (conn && conn.open) {
+        const nextState = JSON.parse(JSON.stringify(gameState));
+        if (myRole === 0) nextState.p1Pos = nextPos;
+        else nextState.p2Pos = nextPos;
+        nextState.diceVal = step;
+        nextState.modal = { open: true, tileIndex: nextPos, playerIndex: myRole };
+
+        conn.send({
+          action: "rollAnimation",
+          targetVal: step,
+          newState: nextState
+        });
+      }
     }
 
     function handleCloseModal() {
